@@ -6,6 +6,7 @@ import pickle
 import pandas as pd
 
 
+# gets the user input (train, predict, quit)
 def run():
     should_run = True
     while should_run:
@@ -22,6 +23,7 @@ def run():
     print("Thank you for using Breast Cancer AI!")
 
 
+# prints at start of program
 def welcome():
     print("\n\n\n")
     print("Welcome to Breast Cancer AI!")
@@ -29,9 +31,11 @@ def welcome():
     print("inputs such as the mean radius and texture.\n")
 
 
+# trains SVM model saving 20% of data for testing then saves the model
 def train():
     print("Training...")
     cancer = datasets.load_breast_cancer()
+    # if can write to data.csv then save the training set for testing
     try:
         pd.DataFrame(data=cancer['data'], columns=cancer['feature_names']).to_csv("data.csv", sep=",", index=False)
     except PermissionError:
@@ -59,15 +63,14 @@ def train():
     print("Accuracy: ", acc * 100, "%\n")
 
 
+# loads model from pickle then outputs predictions to a file
 def predict():
-    clf = None
     try:
         clf = pickle.load(open("model.pickle", "rb"))
     except FileNotFoundError:
         print("No model found.")
         return
 
-    data = None
     try:
         path = input("Please enter the name of your input file (csv).\n")
         data = pd.read_csv(path)
