@@ -32,7 +32,10 @@ def welcome():
 def train():
     print("Training...")
     cancer = datasets.load_breast_cancer()
-    pd.DataFrame(data=cancer['data'], columns=cancer['feature_names']).to_csv("data.csv", sep=",", index=False)
+    try:
+        pd.DataFrame(data=cancer['data'], columns=cancer['feature_names']).to_csv("data.csv", sep=",", index=False)
+    except PermissionError:
+        pass
 
     print("\nFeature names:")
     print(cancer.feature_names)
@@ -53,7 +56,7 @@ def train():
     with open("model.pickle", "wb") as f:
         pickle.dump(clf, f)
     print("Done!")
-    print("Accuracy: ", acc * 100, "%")
+    print("Accuracy: ", acc * 100, "%\n")
 
 
 def predict():
@@ -72,7 +75,15 @@ def predict():
         print("Invalid input.")
         return
 
-    print(data)
+    predictions = clf.predict(data)
+    output = open("results.txt", "w")
+    for a in predictions:
+        line = "Benign"
+        if a == 1:
+            line = "Malignant"
+        output.write(line + "\n")
+    output.close()
+    print("Predictions saved to results.txt file.\n")
 
 
 if __name__ == '__main__':
